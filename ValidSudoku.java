@@ -21,33 +21,36 @@
  */
 
 class Solution {
-    private  int[][] centers;
-    private  int[][] dirs;
-    private  int m;
-    private  int n;
+    private boolean flag;
+    private int[][] dirs;
+    private int[][] centers;
+    private int m;
+    private int n;
     public boolean isValidSudoku(char[][] board) {
-        centers = new int[][] {{1,1},{1,4},{1,7},{4,1},{4,4},{4,7},{7,1},{7,4},{7,7}};
-        dirs = new int[][] {{-1,1},{0,1},{1,1},{-1,0},{1,0},{-1,-1},{0,-1},{1,-1},{0,0}};
-        m = board[0].length; 
-        n = board.length;
-        boolean flag = true;
+        this.flag = true;
+        this.dirs = new int[][] {{0,0},{0,1},{0,-1},{1,0},{-1,0},{1,1},{-1,-1},{1,-1},{-1,1}};
+        this.centers = new int[][]{{1,1},{1,4},{1,7},{4,1},{4,4},{4,7},{7,1},{7,4},{7,7}};
+        m = board.length;
+        n = board[0].length;
 
-        //validate row
-        flag = validateRow(board);
-        //validate columns
         if(flag){
-            flag = validateColumn(board);
+            flag = validRow(board);
         }
-        //validate 3*3 matrix
+        System.out.println(flag);
         if(flag){
-            flag = validateMatrix(board);
+            flag = validColumn(board);
+        }
+        System.out.println(flag);
+        if(flag){
+            flag = validMatrix(board);
         }
         return flag;
     }
-    private boolean validateRow(char[][] board){
-        for(int j = 0; j< n; j++){
+
+    private boolean validRow(char[][] board){
+        for(int i = 0; i < m; i++){
             HashSet<Character> set = new HashSet<>();
-            for(int i =0; i< m; i++){
+            for(int j = 0; j < n; j++){
                 char ch = board[i][j];
                 if(ch != '.'){
                     if(!set.contains(ch)){
@@ -55,15 +58,15 @@ class Solution {
                     }else{
                         return false;
                     }
-                }                
+                }
             }
         }
         return true;
     }
-    private boolean validateColumn(char[][] board){
-        for(int i =0; i< m; i++){
+    private boolean validColumn(char[][] board){
+        for(int j = 0; j < n; j++){
             HashSet<Character> set = new HashSet<>();
-            for(int j = 0; j< n; j++){
+            for(int i = 0; i < m; i++){
                 char ch = board[i][j];
                 if(ch != '.'){
                     if(!set.contains(ch)){
@@ -71,27 +74,32 @@ class Solution {
                     }else{
                         return false;
                     }
-                }                
+                }
             }
         }
         return true;
     }
-    private boolean validateMatrix(char[][] board){
-        for(int[] center : centers){
-            int i = center[0];
-            int j = center[1];
+    private boolean validMatrix(char[][] board){
+        for(int[] center: centers){
+            int r = center[0];
+            int c = center[1];
             HashSet<Character> set = new HashSet<>();
-            for(int[] dir: dirs){
-                int nr = i + dir[0];
-                int nc = j + dir[1];
-                char ch = board[nr][nc];
-                if(ch != '.'){
-                    if(nr>=0 && nc>=0 && nr<m && nc< n && !set.contains(ch)){
-                        set.add(ch);
-                    }else{
-                        return false;
+            for(int[] dir : dirs){
+                int nr = r + dir[0];
+                int nc = c + dir[1];
+                System.out.println(r+" , "+c);
+                //boundary check
+                if(nr >= 0 && nc >= 0 && nr < m && nc < n){
+                    char ch = board[nr][nc];
+                    if(ch != '.'){
+                        if(!set.contains(ch)){
+                            set.add(ch);
+                        }else{
+                            System.out.println(nr+" , "+nc+" , "+ch);
+                            return false;
+                        }
                     }
-                }                
+                }
             }
         }
         return true;
